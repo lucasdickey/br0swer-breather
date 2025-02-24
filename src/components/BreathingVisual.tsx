@@ -6,24 +6,36 @@ interface BreathingVisualProps {
 }
 
 export function BreathingVisual({ phase, progress }: BreathingVisualProps) {
-  const getTransform = () => {
+  const getAnimation = () => {
     switch (phase) {
       case "inhale":
-        return `scale(${0.5 + progress * 0.5})`;
-      case "hold-in":
-        return "scale(1)";
+        return "animate-breathe-in";
       case "exhale":
-        return `scale(${1 - progress * 0.5})`;
+        return "animate-breathe-out";
+      case "hold-in":
       case "hold-out":
-        return "scale(0.5)";
+        return "animate-hold";
     }
   };
 
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       <div
-        className="w-1/2 h-1/2 bg-breathing-accent rounded-lg transition-transform duration-1000"
-        style={{ transform: getTransform() }}
+        className={`w-1/2 h-1/2 rounded-lg transition-all duration-1000
+          bg-gradient-to-br from-breathing-primary to-breathing-accent
+          dark:from-breathing-accent dark:to-breathing-primary
+          shadow-lg dark:shadow-breathing-accent/20 ${getAnimation()}`}
+        style={{
+          transform: `scale(${
+            phase === "inhale"
+              ? 0.5 + progress * 0.5
+              : phase === "exhale"
+              ? 1 - progress * 0.5
+              : phase === "hold-in"
+              ? 1
+              : 0.5
+          })`,
+        }}
       />
     </div>
   );
