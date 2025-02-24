@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useBreathingStore } from "@/store/breathingStore";
-import { BreathingPhase } from "@/types/breathing";
+import { BreathingPhase, BreathingState } from "@/types/breathing";
 import { BreathingVisual } from "./BreathingVisual";
 import { BreathingAudio } from "./BreathingAudio";
 import { BreathingVoice } from "./BreathingVoice";
@@ -30,11 +30,72 @@ export function BreathingController() {
   const timerRef = useRef<NodeJS.Timeout>();
   const [showCelebration, setShowCelebration] = useState(false);
 
+  const handleKeyPress = useCallback(
+    (event: KeyboardEvent) => {
+      // Ignore key events if user is typing in an input
+      if (event.target instanceof HTMLInputElement) return;
+
+      switch (event.key) {
+        case " ": // Space bar
+          event.preventDefault();
+          if (isActive) {
+            stop();
+          } else {
+            start();
+          }
+          break;
+        case "Escape":
+          if (isActive) {
+            stop();
+          }
+          break;
+        case "ArrowUp":
+          if (!isActive) {
+            useBreathingStore.setState((state: BreathingState) => ({
+              settings: {
+                ...state.settings,
+                cycleCount: Math.min(10, state.settings.cycleCount + 1),
+              },
+            }));
+          }
+          break;
+        case "ArrowDown":
+          if (!isActive) {
+            useBreathingStore.setState((state: BreathingState) => ({
+              settings: {
+                ...state.settings,
+                cycleCount: Math.max(1, state.settings.cycleCount - 1),
+              },
+            }));
+          }
+          break;
+        default:
+          // Number keys 1-9
+          const num = Number(event.key);
+          if (!isActive && num >= 1 && num <= 9) {
+            useBreathingStore.setState((state: BreathingState) => ({
+              settings: {
+                ...state.settings,
+                cycleCount: num,
+              },
+            }));
+          }
+          break;
+      }
+    },
+    [isActive, start, stop]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [handleKeyPress]);
+
   useEffect(() => {
     if (!isActive) return;
 
     timerRef.current = setInterval(() => {
-      useBreathingStore.setState((state) => {
+      useBreathingStore.setState((state: BreathingState) => {
         const newSecondsRemaining = state.secondsRemaining - 1;
 
         if (newSecondsRemaining <= 0) {
@@ -115,6 +176,18 @@ export function BreathingController() {
 
       {showCelebration && (
         <CompletionCelebration onClose={() => setShowCelebration(false)} />
+      )}
+
+      {!isActive && (
+        <div className="fixed bottom-4 left-4 text-sm text-breathing-dark/60 dark:text-breathing-neutral/60">
+          <p>Keyboard shortcuts:</p>
+          <ul className="mt-1 space-y-1">
+            <li>Space - Start/Stop</li>
+            <li>Esc - Stop</li>
+            <li>↑/↓ - Adjust cycles</li>
+            <li>1-9 - Set cycles</li>
+          </ul>
+        </div>
       )}
     </div>
   );

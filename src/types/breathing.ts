@@ -21,4 +21,5 @@ export interface BreathingState {
   currentPhase: BreathingPhase;
   currentCycle: number;
   secondsRemaining: number;
+  settings: BreathingSettings;
 }

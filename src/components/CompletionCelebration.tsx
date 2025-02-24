@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { useBreathingStore } from "@/store/breathingStore";
 import confetti from "canvas-confetti";
 
-const INSPIRATIONAL_QUOTES = [
+interface Quote {
+  text: string;
+  author: string;
+}
+
+// Define as a constant array with explicit type and make it non-empty
+const INSPIRATIONAL_QUOTES: [Quote, ...Quote[]] = [
   {
     text: "Breathing is the greatest pleasure in life",
     author: "Giovanni Papini",
@@ -83,7 +89,7 @@ const INSPIRATIONAL_QUOTES = [
     text: "The way you breathe is the way you live",
     author: "Anonymous",
   },
-];
+] satisfies Quote[];
 
 interface CompletionCelebrationProps {
   onClose: () => void;
@@ -131,7 +137,9 @@ export function CompletionCelebration({ onClose }: CompletionCelebrationProps) {
     };
   }, []);
 
-  const currentQuote = INSPIRATIONAL_QUOTES[currentQuoteIndex];
+  // TypeScript now knows this array will always have at least one element
+  const currentQuote =
+    INSPIRATIONAL_QUOTES[currentQuoteIndex % INSPIRATIONAL_QUOTES.length];
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-breathing-dark/80 dark:bg-breathing-dark/95 z-50">

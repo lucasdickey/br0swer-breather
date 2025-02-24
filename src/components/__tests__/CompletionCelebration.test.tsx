@@ -1,8 +1,12 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { CompletionCelebration } from "../CompletionCelebration";
 
-// Mock canvas-confetti
-jest.mock("canvas-confetti", () => jest.fn());
+// Mock canvas-confetti with a more complete mock
+jest.mock("canvas-confetti", () => ({
+  __esModule: true,
+  default: jest.fn(),
+  reset: jest.fn(),
+}));
 
 describe("CompletionCelebration", () => {
   it("renders congratulatory message", () => {

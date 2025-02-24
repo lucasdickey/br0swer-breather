@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { BreathingPhase } from "@/types/breathing";
+import { BreathingPhase, BreathingState } from "@/types/breathing";
 import { useBreathingStore } from "@/store/breathingStore";
 
 interface BreathingAudioProps {
@@ -9,7 +9,7 @@ interface BreathingAudioProps {
 export function BreathingAudio({ phase }: BreathingAudioProps) {
   const audioContext = useRef<AudioContext>();
   const oscillator = useRef<OscillatorNode>();
-  const settings = useBreathingStore((state) => state.settings);
+  const settings = useBreathingStore((state: BreathingState) => state.settings);
 
   useEffect(() => {
     if (!settings.enabledMethods.audioChord) return;
