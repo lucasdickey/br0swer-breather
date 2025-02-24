@@ -60,18 +60,28 @@ export const useBreathingStore = create<BreathingStore>((set) => ({
         "hold-out",
       ];
       const currentIndex = phases.indexOf(state.currentPhase);
-      const nextIndex = (currentIndex + 1) % (phases.length - 1);
-      const nextPhase = phases[nextIndex === 0 ? 1 : nextIndex];
 
-      const isNewCycle =
-        nextPhase === "inhale" && state.currentPhase === "hold-out";
-      const currentCycle = isNewCycle
-        ? state.currentCycle + 1
-        : state.currentCycle;
+      // If we're in prepare, go to inhale
+      if (state.currentPhase === "prepare") {
+        return {
+          currentPhase: "inhale",
+          secondsRemaining: state.settings.secondsPerPhase,
+        };
+      }
 
+      // If we're in hold-out, go back to inhale and increment cycle
+      if (state.currentPhase === "hold-out") {
+        return {
+          currentPhase: "inhale",
+          currentCycle: state.currentCycle + 1,
+          secondsRemaining: state.settings.secondsPerPhase,
+        };
+      }
+
+      // Otherwise, go to next phase
+      const nextPhase = phases[currentIndex + 1];
       return {
         currentPhase: nextPhase,
-        currentCycle,
         secondsRemaining: state.settings.secondsPerPhase,
       };
     }),

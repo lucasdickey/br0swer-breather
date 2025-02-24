@@ -77,12 +77,16 @@ export function BreathingController() {
 
         <div className="text-center">
           <div className="mt-8 text-2xl font-semibold text-breathing-dark dark:text-breathing-neutral">
-            {currentPhase.replace("-", " ").toUpperCase()}
+            {currentPhase === "prepare"
+              ? "GET READY"
+              : currentPhase.replace("-", " ").toUpperCase()}
           </div>
 
-          <div className="mt-4 text-xl text-breathing-primary dark:text-breathing-secondary">
-            Cycle {currentCycle} of {settings.cycleCount}
-          </div>
+          {currentPhase !== "prepare" && (
+            <div className="mt-4 text-xl text-breathing-primary dark:text-breathing-secondary">
+              Cycle {currentCycle} of {settings.cycleCount}
+            </div>
+          )}
 
           <button
             onClick={isActive ? stop : start}

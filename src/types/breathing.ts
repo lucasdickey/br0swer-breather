@@ -8,12 +8,12 @@ export type BreathingPhase =
 export interface BreathingSettings {
   cycleCount: number;
   secondsPerPhase: number;
+  prepareSeconds: number;
   enabledMethods: {
     visual: boolean;
     text: boolean;
     audioChord: boolean;
     audioVoice: boolean;
-    haptic: boolean;
   };
   volume: {
     chord: number;

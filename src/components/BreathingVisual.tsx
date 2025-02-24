@@ -1,8 +1,8 @@
 import { BreathingPhase, BreathingVisualProps } from "@/types/breathing";
 
 export function BreathingVisual({ phase, progress }: BreathingVisualProps) {
-  const baseSize = 100; // Base size percentage
-  const expandedSize = 150; // Maximum size percentage
+  const baseSize = 50; // Smaller base size
+  const expandedSize = 100; // Larger expanded size
 
   const getSize = () => {
     switch (phase) {
@@ -39,13 +39,14 @@ export function BreathingVisual({ phase, progress }: BreathingVisualProps) {
     <div className="absolute inset-0 flex items-center justify-center">
       <div
         data-testid="breathing-visual"
-        className={`w-1/2 h-1/2 rounded-lg transition-all duration-1000
+        className={`rounded-lg transition-transform duration-1000
           bg-gradient-to-br from-breathing-primary to-breathing-accent
           dark:from-breathing-accent dark:to-breathing-primary
           shadow-lg dark:shadow-breathing-accent/20 ${getAnimation()}`}
         style={{
           width: `${size}%`,
           height: `${size}%`,
+          transition: "all 0.2s ease-in-out",
         }}
       />
     </div>
