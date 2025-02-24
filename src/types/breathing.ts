@@ -1,4 +1,9 @@
-export type BreathingPhase = "inhale" | "hold-in" | "exhale" | "hold-out";
+export type BreathingPhase =
+  | "prepare" // New preparation phase
+  | "inhale"
+  | "hold-in"
+  | "exhale"
+  | "hold-out";
 
 export interface BreathingSettings {
   cycleCount: number;
@@ -29,6 +34,8 @@ export interface BreathingStore extends BreathingState {
   stop: () => void;
   updatePhase: (phase: BreathingPhase) => void;
   updateSettings: (settings: Partial<BreathingSettings>) => void;
+  updateTimer: (secondsRemaining: number) => void;
+  nextPhase: () => void;
 }
 
 // Add component prop types

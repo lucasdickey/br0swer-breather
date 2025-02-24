@@ -1,6 +1,28 @@
 import { BreathingPhase, BreathingVisualProps } from "@/types/breathing";
 
 export function BreathingVisual({ phase, progress }: BreathingVisualProps) {
+  const baseSize = 100; // Base size percentage
+  const expandedSize = 150; // Maximum size percentage
+
+  const getSize = () => {
+    switch (phase) {
+      case "prepare":
+        return baseSize;
+      case "inhale":
+        return baseSize + (expandedSize - baseSize) * progress;
+      case "hold-in":
+        return expandedSize;
+      case "exhale":
+        return expandedSize - (expandedSize - baseSize) * progress;
+      case "hold-out":
+        return baseSize;
+      default:
+        return baseSize;
+    }
+  };
+
+  const size = getSize();
+
   const getAnimation = () => {
     switch (phase) {
       case "inhale":
@@ -22,15 +44,8 @@ export function BreathingVisual({ phase, progress }: BreathingVisualProps) {
           dark:from-breathing-accent dark:to-breathing-primary
           shadow-lg dark:shadow-breathing-accent/20 ${getAnimation()}`}
         style={{
-          transform: `scale(${
-            phase === "inhale"
-              ? 0.5 + progress * 0.5
-              : phase === "exhale"
-              ? 1 - progress * 0.5
-              : phase === "hold-in"
-              ? 1
-              : 0.5
-          })`,
+          width: `${size}%`,
+          height: `${size}%`,
         }}
       />
     </div>

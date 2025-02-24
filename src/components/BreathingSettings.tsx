@@ -2,12 +2,9 @@ import { useBreathingStore } from "@/store/breathingStore";
 import { BreathingStore } from "@/types/breathing";
 
 export function BreathingSettings() {
-  const { settings, updateSettings } = useBreathingStore(
-    (state: BreathingStore) => ({
-      settings: state.settings,
-      updateSettings: state.updateSettings,
-    })
-  );
+  // Use separate selectors for each value to avoid object creation
+  const settings = useBreathingStore((state) => state.settings);
+  const updateSettings = useBreathingStore((state) => state.updateSettings);
 
   return (
     <div

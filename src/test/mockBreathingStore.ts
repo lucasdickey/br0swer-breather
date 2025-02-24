@@ -1,4 +1,9 @@
-import { BreathingStore, BreathingSettings } from "@/types/breathing";
+import {
+  BreathingStore,
+  BreathingSettings,
+  BreathingPhase,
+} from "@/types/breathing";
+import { create } from "zustand";
 
 const DEFAULT_TEST_SETTINGS: BreathingSettings = {
   cycleCount: 4,
@@ -16,28 +21,89 @@ const DEFAULT_TEST_SETTINGS: BreathingSettings = {
   },
 };
 
-export const createMockStore = (overrides = {}): Partial<BreathingStore> => ({
-  isActive: false,
-  currentPhase: "inhale",
-  currentCycle: 1,
-  secondsRemaining: 4,
-  settings: DEFAULT_TEST_SETTINGS,
-  start: jest.fn(),
-  stop: jest.fn(),
-  updatePhase: jest.fn(),
-  updateSettings: jest.fn(),
-  ...overrides,
-});
+export const createMockStore = (overrides = {}) => {
+  const store = create<BreathingStore>((set, get) => {
+    // Create mock functions that also update state
+    const start = jest.fn().mockImplementation(() => {
+      set({ isActive: true });
+    });
 
-type Selector<T> = (state: BreathingStore) => T;
+    const stop = jest.fn().mockImplementation(() => {
+      set({
+        isActive: false,
+        currentCycle: 1,
+        currentPhase: "inhale",
+        secondsRemaining: DEFAULT_TEST_SETTINGS.secondsPerPhase,
+      });
+    });
+
+    const updatePhase = jest
+      .fn()
+      .mockImplementation((phase: BreathingPhase) => {
+        set({ currentPhase: phase });
+      });
+
+    const updateSettings = jest
+      .fn()
+      .mockImplementation((newSettings: Partial<BreathingSettings>) => {
+        set((state) => ({
+          settings: { ...state.settings, ...newSettings },
+        }));
+      });
+
+    const updateTimer = jest.fn().mockImplementation((seconds: number) => {
+      set({ secondsRemaining: seconds });
+    });
+
+    const nextPhase = jest.fn().mockImplementation(() => {
+      const state = get();
+      const phases: BreathingPhase[] = [
+        "inhale",
+        "hold-in",
+        "exhale",
+        "hold-out",
+      ];
+      const currentIndex = phases.indexOf(state.currentPhase);
+      const nextIndex = (currentIndex + 1) % phases.length;
+      const nextPhase = phases[nextIndex];
+      const isNewCycle = nextPhase === "inhale";
+
+      set({
+        currentPhase: nextPhase,
+        currentCycle: isNewCycle ? state.currentCycle + 1 : state.currentCycle,
+        secondsRemaining: state.settings.secondsPerPhase,
+      });
+    });
+
+    return {
+      // State
+      isActive: false,
+      currentPhase: "inhale" as BreathingPhase,
+      currentCycle: 1,
+      secondsRemaining: 4,
+      settings: DEFAULT_TEST_SETTINGS,
+
+      // Actions
+      start,
+      stop,
+      updatePhase,
+      updateSettings,
+      updateTimer,
+      nextPhase,
+      ...overrides,
+    };
+  });
+
+  return store.getState();
+};
 
 export const mockBreathingStore = (overrides = {}) => {
   const store = createMockStore(overrides);
   const useBreathingStore = jest.requireMock(
     "@/store/breathingStore"
   ).useBreathingStore;
-  useBreathingStore.mockImplementation(<T>(selector?: Selector<T>) =>
-    selector ? selector(store as BreathingStore) : store
-  );
+
+  useBreathingStore.mockImplementation(() => store);
+
   return store;
 };

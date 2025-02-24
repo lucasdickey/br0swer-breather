@@ -9,12 +9,12 @@ import {
 const DEFAULT_SETTINGS: BreathingSettings = {
   cycleCount: 4,
   secondsPerPhase: 4,
+  prepareSeconds: 3,
   enabledMethods: {
     visual: true,
     text: true,
     audioChord: true,
     audioVoice: true,
-    haptic: true,
   },
   volume: {
     chord: 0.5,
@@ -31,7 +31,12 @@ export const useBreathingStore = create<BreathingStore>((set) => ({
   settings: DEFAULT_SETTINGS,
 
   // Actions
-  start: () => set({ isActive: true }),
+  start: () =>
+    set({
+      isActive: true,
+      currentPhase: "prepare",
+      secondsRemaining: DEFAULT_SETTINGS.prepareSeconds,
+    }),
   stop: () =>
     set({
       isActive: false,
@@ -44,4 +49,30 @@ export const useBreathingStore = create<BreathingStore>((set) => ({
     set((state) => ({
       settings: { ...state.settings, ...newSettings },
     })),
+  updateTimer: (secondsRemaining: number) => set({ secondsRemaining }),
+  nextPhase: () =>
+    set((state) => {
+      const phases: BreathingPhase[] = [
+        "prepare",
+        "inhale",
+        "hold-in",
+        "exhale",
+        "hold-out",
+      ];
+      const currentIndex = phases.indexOf(state.currentPhase);
+      const nextIndex = (currentIndex + 1) % (phases.length - 1);
+      const nextPhase = phases[nextIndex === 0 ? 1 : nextIndex];
+
+      const isNewCycle =
+        nextPhase === "inhale" && state.currentPhase === "hold-out";
+      const currentCycle = isNewCycle
+        ? state.currentCycle + 1
+        : state.currentCycle;
+
+      return {
+        currentPhase: nextPhase,
+        currentCycle,
+        secondsRemaining: state.settings.secondsPerPhase,
+      };
+    }),
 }));
