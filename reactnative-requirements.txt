@@ -1,0 +1,175 @@
+FIRST DRAFT
+
+HIGH LEVEL REQUIREMENTS:
+The project we're going to build is a mobile-optimized web app that teaches users how to box breathe.
+
+1. We are going to build a mobile app that teaches users how to box breathe.
+2. The app will provide a step by step guide on how to box breathe.
+3. The app will also provide a timer to help users time their box breathing.
+4. The app will also provide a progress tracker to help users track their progress.
+4. The app wil have a simple and clean UI/UX.
+5. The app will have a simple and clean animation.
+6. The app will have a simple and clean sound.
+7. The app will have a simple and clean text.
+8. The app will have a simple and clean button.
+9. The app will have a simple and clean image.
+10. The app will have a simple and clean video.
+11. I'm repeating simple and clean a lot, but it's because I want the app to be simple and clean. The goal here is to help the user stay very focused on the breathing exercise.
+12. The app doesn't need to be cognizant of a user's persona or account creation. The user should just be dropped into the app and told to breathe.
+13. If the user adjusts any of the settings, the app should remember the user's preferences via local storage. No need for pushing to a remote server.
+
+Specific Requirements:
+1. The app should have a single page that teaches the user how to box breathe. There should be no navigation to other pages.
+2. The app should follow the standard breathing cadence and intervals of 4 seconds for each phase of the box cycle, with a total of 16 seconds per cycle. The first 4 seconds should be an inhalation, the next 4 seconds should be a hold, the next 4 seconds should be an exhalation, and the last 4 seconds should be a hold.
+3. The app should have 5 separate methods for helping the user practice box breathing, as different people may find different methods most effective. The methods should be as follows:
+    a. The first would be a simple text-based counter for each of the 4 seconds of the box cycle.
+    b. The second method should be a visual counter, using a progress bar to show the user the progress of the box cycle. This progress bar should be animated to show the user the progress of the box cycle. The progress "bar" should be a squre that fills up as the user progresses through the box cycle.
+    c. The third method should be a sound counter, using basic pleasing chords to signal the start of each of the 4 seconds of the box cycle. The chord progression should be logical and pleasing to the ear.
+    d. The fourth method should be another audio cue, using a voice sample for each of the 4 seconds of the box cycle.
+    e. The fifth method should be haptic feedback, using a vibration to signal the start of each of the 4 seconds of the box cycle.
+4. The user should be able to mute the two different audio cues, so they can focus on the visual counter if they want to.
+5. The user should be able to choose how many cycles they want to do, with a default of 4 cycles.
+6. When the user has completed an entire box cycle set, the app should provide a short message of encouragement to the user.
+
+Technical Requirements:
+0. Enforce strong TypeScript discipline [see more details below]
+1.a Set Up a Strong TypeScript Configuration
+1.b Standardize Type Definitions for Models, UI, and Services. Define global types and interfaces that are reusable across the app.
+1.c Use a TypeScript Linter with AI (ESLint + Prettier)
+1.d Define a Cursor Instruction for Type Consistency
+1. The app should be built using React Native.
+2. The app should use the Material Design Icons and other design language for UX/UI, interface design, and animation.
+3. The spoken audio cues should be provided by a text-to-speech (TTS) engine.
+4. The haptic feedback should be provided by the device's vibration motor.
+5. The progress bar should be animated using the Lottie animation library.
+6. The app should be responsive and adaptive to different screen sizes.
+7. The app should be optimized for performance and battery life.
+8. The app should use a tone generator to generate the chords for the sound counter.
+9. Offline Mode: Ensure the app functions without an internet connection.
+10. Battery Optimization: Running animations and haptics continuously may drain battery. Consider optimizations like reducing screen brightness or providing a low-power mode.
+11. Accessibility Features:
+    a. Large text and high contrast mode for visually impaired users.
+    b. Voice descriptions for blind users.
+    c. Customizable haptic strength for different sensitivities.
+
+Design Requirements:
+1. Colors: Please use a color scheme reminiscent of a wind and water theme.
+2. Typography: Please use a modern and clean typography, specifically a sans-serif font and that is open source
+3. Animation: Please use a modern and clean animation style.
+4. Icons: Please use the Material Design Icons library for icons.
+5. Images: Please use the Material Design Icons library for images.
+6. Videos: Please use the Material Design Icons library for videos.
+7. Dark Mode Support: Many users prefer this, especially for relaxation-focused apps.
+
+NOTE FOR LATER:
+1. Customizable Timers: Allow users to extend the duration of each phase beyond 4 seconds? Some people prefer 5 seconds for the inhalation and exhalation, and 6 seconds for the hold.
+2. Sound Customization: Some users may prefer nature sounds over chords. Providing options (e.g., chimes, ocean waves) could increase adoption.
+3. Breathing Position Guidance: The research doc suggests sitting upright—should you include subtle posture reminders?
+4. Emergency “Calm Now” Mode: A quick-access feature for immediate relaxation with a preset number of cycles. Maybe a launch screen widget that allows the user to quickly access the app and start breathing.
+
+TYPE SCRIPT REQUIREMENTS:
+
+To ensure Cursor (or any AI code generator) maintains consistent typing across model layers, UI, services, and other parts of your app, you should enforce strong TypeScript discipline. Here’s how:
+
+1. Set Up a Strong TypeScript Configuration (tsconfig.json)
+
+Define a strict TypeScript config to enforce consistent typing throughout your app.
+
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noUncheckedIndexedAccess": true
+  }
+}
+
+This prevents implicit any types, enforces property initialization, and ensures function parameters and return types are properly defined.
+
+2. Standardize Type Definitions for Models, UI, and Services
+
+Define global types and interfaces that are reusable across the app.
+
+✅ Example: Consistent Type Definitions in Models (types.ts)
+
+export type BoxBreathingStep = "inhale" | "hold" | "exhale";
+
+export interface BreathingSession {
+  id: string;
+  duration: number;
+  steps: BoxBreathingStep[];
+}
+
+✅ Example: Consistent API Response Types (services/api.ts)
+
+import { BreathingSession } from "../types";
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  error?: string;
+}
+
+export const fetchBreathingSessions = async (): Promise<ApiResponse<BreathingSession[]>> => {
+  // Fetch logic here
+};
+
+✅ Example: Consistent UI Component Props (components/Timer.tsx)
+
+interface TimerProps {
+  timeLeft: number;
+  onComplete: () => void;
+}
+
+export const Timer: React.FC<TimerProps> = ({ timeLeft, onComplete }) => {
+  return <div>{timeLeft}s</div>;
+};
+
+3. Use a TypeScript Linter with AI (ESLint + Prettier)
+
+Make sure AI-generated code follows the project rules using ESLint with TypeScript rules:
+
+Install dependencies:
+
+npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
+
+.eslintrc.json:
+
+{
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "rules": {
+    "@typescript-eslint/explicit-module-boundary-types": "error",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/consistent-type-definitions": ["error", "interface"]
+  }
+}
+
+✅ Forces explicit return types, prevents any, and enforces interface consistency.
+
+4. Define a Cursor Instruction for Type Consistency
+
+When working with Cursor, include a clear instruction in your system prompt or project readme:
+
+	🔹 Cursor Guidelines:
+		•	Use TypeScript strictly (strict: true).
+	•	All models, services, and UI components must use consistent types from types.ts.
+	•	No any types. Use proper generics and interfaces.
+	•	API responses should always be typed with generics.
+	•	Use React.FC` for components.
+	•	Follow ESLint TypeScript rules for consistent coding styles.
+
+5. Validate AI-Generated Code with Type Checking
+
+Use TypeScript’s CLI to verify AI-generated code:
+
+tsc --noEmit
+
+This will check for type mismatches and ensure AI-generated code follows your rules before execution.
+
+Final Thoughts
+
+The combination of strict TypeScript settings, consistent global types, AI coding guidelines, ESLint rules, and type validation ensures Cursor (or any AI generator) follows a single, enforceable typing style. Want a pre-configured template repo with these settings? 🚀

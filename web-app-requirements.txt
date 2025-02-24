@@ -1,0 +1,128 @@
+Below is a single, comprehensive prompt you can feed into an AI agent or IDE to guide the creation of a Next.js/React TypeScript app based on the original requirements. It’s been adapted from the Android-focused version to a web-based environment, with the same core features and design goals.
+
+Project Prompt: Next.js Box Breathing App with TypeScript
+
+Goal:
+Create a mobile-optimized web app in Next.js + React + TypeScript that teaches users how to box breathe, offering multiple feedback mechanisms (visual, textual, audio, haptic), while maintaining a simple and clean UI.
+
+High-Level Requirements
+	1.	Build a single-page Next.js app that guides users through box breathing (4-second inhale, 4-second hold, 4-second exhale, 4-second hold).
+	2.	Keep the UI and UX extremely simple and clean—no user accounts or complex navigation; the user is immediately guided to breathe.
+	3.	Provide a timer and progress tracker to assist in timing each phase.
+	4.	Local storage (or equivalent) should remember user preferences (volume on/off, chosen method, cycle count), with no external server required.
+	5.	Keep the design minimal to help users focus on the breathing exercise.
+
+Specific Feature Requirements
+	1.	Single Page:
+	•	The main route (/) should display the breathing exercise flow (and minimal controls/settings).
+	•	No multi-page navigation necessary (beyond Next.js defaults).
+	2.	Box Breathing Cycle:
+	•	Default cycle = 4-second inhale → 4-second hold → 4-second exhale → 4-second hold (16 seconds total).
+	•	Allow user to choose number of cycles (default = 4 cycles).
+	3.	Five Methods of Guidance:
+	•	Text Counter: Display text that updates each second.
+	•	Visual Counter (Progress Bar / Square): An animated shape (e.g., a square) that “fills” to indicate progress.
+	•	Sound Counter (Chords): Use the Web Audio API or simple audio files to play pleasing chords each second.
+	•	Voice Prompts: Use the Web Speech API (SpeechSynthesis) or pre-recorded samples to cue each second.
+	•	Haptic Feedback: Use navigator.vibrate() where supported, vibrating each second.
+	4.	Audio Control:
+	•	Provide toggles to mute or unmute the chord and/or voice prompt individually.
+	5.	Completion Message:
+	•	Display a brief encouraging message once the user finishes the desired number of cycles.
+
+Technical & Architectural Requirements
+	1.	Next.js + React + TypeScript:
+	•	Use strict type checking with a strong tsconfig.json (noImplicitAny, strict, etc.).
+	•	Enforce consistent coding style with ESLint + Prettier (TypeScript plugin recommended).
+	2.	UI Libraries:
+	•	Use a React component library (Material UI, Chakra UI, etc.) or minimal custom styling.
+	•	Use Material Design Icons (via @mui/icons-material or equivalent) for iconography.
+	3.	Animations:
+	•	For the filling square or any motion graphic, consider a React Lottie library or lightweight CSS animations.
+	•	Keep animations minimal to avoid draining device battery.
+	4.	Audio Handling:
+	•	For chords or beeps, consider the Web Audio API or preloaded audio files.
+	•	For voice cues, use the SpeechSynthesis API or short audio clips.
+	•	Provide controls for volume and toggling audio on/off.
+	5.	Haptic Feedback:
+	•	Implement via Vibration API (navigator.vibrate) where browser and device support is available.
+	•	Graceful fallback if not supported.
+	6.	Offline Mode & PWA (Optional):
+	•	If offline usage is desired, add service workers and a manifest to transform the site into a PWA, caching essential assets.
+	•	The app should remain functional (breathing timers, local preferences) without a network connection.
+	7.	Battery Optimization:
+	•	Provide a “low-power” mode to reduce animation frames or screen brightness.
+	•	Keep data usage minimal (few external resources).
+	8.	Accessibility Features:
+	•	Provide ARIA labels and large-text/high-contrast modes for visually impaired users.
+	•	Voice descriptions for screen readers.
+	•	Customizable haptic strength if possible.
+	9.	Design:
+	•	Colors: Favor a gentle, airy palette (wind/water theme), supporting dark mode.
+	•	Typography: Use modern, open-source sans-serif fonts (e.g., Roboto, Open Sans).
+	•	Keep UI elements spaced and uncluttered.
+
+TypeScript Configuration & Guidelines
+	1.	Strict tsconfig.json
+
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "noUncheckedIndexedAccess": true
+  }
+}
+
+
+	2.	Centralized Type Definitions (types.ts or @/types):
+
+export type BoxBreathingPhase = "inhale" | "hold" | "exhale";
+
+export interface BoxBreathingSettings {
+  cycleCount: number;
+  method: "text" | "visual" | "audio-chord" | "audio-voice" | "vibration";
+  audioVolume: number;
+  isChordMuted: boolean;
+  isVoiceMuted: boolean;
+}
+
+
+	3.	ESLint + Prettier:
+	•	Install: npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin prettier
+	•	Configure:
+
+{
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  "rules": {
+    "@typescript-eslint/explicit-module-boundary-types": "error",
+    "@typescript-eslint/no-explicit-any": "error"
+  }
+}
+
+
+	4.	AI Prompting & Cursor Guidelines (if using an AI-coding tool):
+	•	“Use the strict TypeScript setup.”
+	•	“No any types. Declare clear interfaces and types for all data structures.”
+	•	“Validate code with tsc --noEmit before merging.”
+
+Future / Optional Enhancements
+	1.	Customizable Times (e.g., 5s inhale/exhale, 6s hold).
+	2.	Sound Variations (chimes, white noise, or nature sounds).
+	3.	Posture Guidance or subtle reminders to sit upright.
+	4.	Emergency ‘Calm Now’ Mode: Quick button to start a short, immediate relaxation session.
+
+Instructions to the AI
+	1.	Create a Next.js project with React and TypeScript.
+	2.	Implement strict TS configuration, referencing the sample tsconfig.json.
+	3.	Include minimal UI with a single-page layout.
+	4.	Provide an animation for the box-breathing progress.
+	5.	Integrate audio (chords + voice) and vibration capabilities with toggles.
+	6.	Store user preferences in localStorage.
+	7.	(Optional) Convert to a PWA for offline use.
+
+End of Prompt
