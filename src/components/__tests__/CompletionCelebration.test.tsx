@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { CompletionCelebration } from "../CompletionCelebration";
 
-// Mock canvas-confetti with a more complete mock
+// Mock canvas-confetti
 jest.mock("canvas-confetti", () => ({
   __esModule: true,
   default: jest.fn(),
@@ -10,22 +10,23 @@ jest.mock("canvas-confetti", () => ({
 
 describe("CompletionCelebration", () => {
   it("renders congratulatory message", () => {
-    render(<CompletionCelebration onClose={() => {}} />);
+    const onClose = jest.fn();
+    render(<CompletionCelebration onClose={onClose} />);
     expect(screen.getByText("Great job!")).toBeInTheDocument();
   });
 
-  it("displays an inspirational quote", () => {
-    render(<CompletionCelebration onClose={() => {}} />);
-    // Find the quote container by its class
+  it("displays a quote", () => {
+    const onClose = jest.fn();
+    render(<CompletionCelebration onClose={onClose} />);
     const quoteContainer = screen.getByTestId("quote-container");
-    expect(quoteContainer).toHaveClass("min-h-[120px]");
+    expect(quoteContainer).toBeInTheDocument();
+    expect(quoteContainer.textContent).not.toBe("");
   });
 
   it("calls onClose when continue button is clicked", () => {
-    const mockOnClose = jest.fn();
-    render(<CompletionCelebration onClose={mockOnClose} />);
-
+    const onClose = jest.fn();
+    render(<CompletionCelebration onClose={onClose} />);
     fireEvent.click(screen.getByText("Continue"));
-    expect(mockOnClose).toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
   });
 });

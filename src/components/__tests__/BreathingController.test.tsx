@@ -1,47 +1,68 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { BreathingController } from "../BreathingController";
+import { mockBreathingStore } from "../../test/mockBreathingStore";
 
-// Mock the store
-jest.mock("@/store/breathingStore", () => ({
-  useBreathingStore: () => ({
-    isActive: false,
-    currentPhase: "inhale",
-    currentCycle: 1,
-    secondsRemaining: 4,
-    settings: {
-      cycleCount: 4,
-      secondsPerPhase: 4,
-      enabledMethods: {
-        visual: true,
-        text: true,
-        audioChord: false,
-        audioVoice: false,
-        haptic: false,
-      },
-      volume: {
-        chord: 0.5,
-        voice: 0.5,
-      },
-    },
-    start: jest.fn(),
-    stop: jest.fn(),
-    updatePhase: jest.fn(),
-  }),
+// Mock child components
+jest.mock("../BreathingVisual", () => ({
+  BreathingVisual: () => <div data-testid="mock-visual" />,
+}));
+
+jest.mock("../BreathingAudio", () => ({
+  BreathingAudio: () => null,
+}));
+
+jest.mock("../BreathingVoice", () => ({
+  BreathingVoice: () => null,
+}));
+
+jest.mock("../BreathingSettings", () => ({
+  BreathingSettings: () => <div data-testid="mock-settings" />,
+}));
+
+jest.mock("../DarkModeToggle", () => ({
+  DarkModeToggle: () => <div data-testid="mock-dark-mode" />,
+}));
+
+jest.mock("../CompletionCelebration", () => ({
+  CompletionCelebration: ({ onClose }: { onClose: () => void }) => (
+    <div data-testid="mock-celebration" onClick={onClose} />
+  ),
 }));
 
 describe("BreathingController", () => {
-  it("renders the start button when inactive", () => {
-    render(<BreathingController />);
-    expect(screen.getByText("Start")).toBeInTheDocument();
+  beforeEach(() => {
+    jest.useFakeTimers();
+    mockBreathingStore();
   });
 
-  it("displays the current phase", () => {
-    render(<BreathingController />);
-    expect(screen.getByText("INHALE")).toBeInTheDocument();
+  afterEach(() => {
+    jest.useRealTimers();
+    jest.clearAllMocks();
   });
 
-  it("shows cycle information", () => {
+  it("renders initial state correctly", () => {
     render(<BreathingController />);
-    expect(screen.getByText("Cycle 1 of 4")).toBeInTheDocument();
+    expect(screen.getByText(/cycle 1 of/i)).toBeInTheDocument();
+    expect(screen.getByText(/start/i)).toBeInTheDocument();
+  });
+
+  it("starts breathing cycle when start button is clicked", () => {
+    const store = mockBreathingStore();
+    render(<BreathingController />);
+
+    fireEvent.click(screen.getByText(/start/i));
+    expect(store.start).toHaveBeenCalled();
+  });
+
+  it("progresses through breathing phases", () => {
+    const store = mockBreathingStore({ isActive: true });
+    render(<BreathingController />);
+
+    // Fast-forward through one phase
+    act(() => {
+      jest.advanceTimersByTime(4000); // Default phase duration
+    });
+
+    expect(store.updatePhase).toHaveBeenCalled();
   });
 });

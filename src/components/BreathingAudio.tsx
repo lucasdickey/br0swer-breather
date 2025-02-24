@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
-import { BreathingPhase, BreathingState } from "@/types/breathing";
+import {
+  BreathingAudioProps,
+  BreathingState,
+  BreathingPhase,
+} from "@/types/breathing";
 import { useBreathingStore } from "@/store/breathingStore";
-
-interface BreathingAudioProps {
-  phase: BreathingPhase;
-}
 
 export function BreathingAudio({ phase }: BreathingAudioProps) {
   const audioContext = useRef<AudioContext>();
@@ -32,10 +32,12 @@ export function BreathingAudio({ phase }: BreathingAudioProps) {
     oscillator.current.connect(gainNode);
     gainNode.connect(audioContext.current.destination);
 
-    oscillator.current.frequency.value = frequencies[phase];
-    gainNode.gain.value = settings.volume.chord;
+    if (oscillator.current && frequencies[phase]) {
+      oscillator.current.frequency.value = frequencies[phase];
+      gainNode.gain.value = settings.volume.chord;
 
-    oscillator.current.start();
+      oscillator.current.start();
+    }
 
     return () => {
       oscillator.current?.stop();

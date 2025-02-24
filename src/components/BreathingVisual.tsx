@@ -1,9 +1,4 @@
-import { BreathingPhase } from "@/types/breathing";
-
-interface BreathingVisualProps {
-  phase: BreathingPhase;
-  progress: number;
-}
+import { BreathingPhase, BreathingVisualProps } from "@/types/breathing";
 
 export function BreathingVisual({ phase, progress }: BreathingVisualProps) {
   const getAnimation = () => {
@@ -21,6 +16,7 @@ export function BreathingVisual({ phase, progress }: BreathingVisualProps) {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       <div
+        data-testid="breathing-visual"
         className={`w-1/2 h-1/2 rounded-lg transition-all duration-1000
           bg-gradient-to-br from-breathing-primary to-breathing-accent
           dark:from-breathing-accent dark:to-breathing-primary

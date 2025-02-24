@@ -1,7 +1,13 @@
 import { useBreathingStore } from "@/store/breathingStore";
+import { BreathingStore } from "@/types/breathing";
 
 export function BreathingSettings() {
-  const { settings, updateSettings } = useBreathingStore();
+  const { settings, updateSettings } = useBreathingStore(
+    (state: BreathingStore) => ({
+      settings: state.settings,
+      updateSettings: state.updateSettings,
+    })
+  );
 
   return (
     <div
@@ -39,28 +45,28 @@ export function BreathingSettings() {
             Feedback Methods
           </label>
           <div className="space-y-2">
-            {Object.entries(settings.enabledMethods).map(
-              ([method, enabled]) => (
-                <label key={method} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={enabled}
-                    onChange={() =>
-                      updateSettings({
-                        enabledMethods: {
-                          ...settings.enabledMethods,
-                          [method]: !enabled,
-                        },
-                      })
-                    }
-                    className="rounded text-breathing-primary"
-                  />
-                  <span className="text-sm text-breathing-dark dark:text-breathing-neutral capitalize">
-                    {method.replace(/([A-Z])/g, " $1").trim()}
-                  </span>
-                </label>
-              )
-            )}
+            {(
+              Object.entries(settings.enabledMethods) as [string, boolean][]
+            ).map(([method, enabled]) => (
+              <label key={method} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={enabled}
+                  onChange={() =>
+                    updateSettings({
+                      enabledMethods: {
+                        ...settings.enabledMethods,
+                        [method]: !enabled,
+                      },
+                    })
+                  }
+                  className="rounded text-breathing-primary"
+                />
+                <span className="text-sm text-breathing-dark dark:text-breathing-neutral capitalize">
+                  {method.replace(/([A-Z])/g, " $1").trim()}
+                </span>
+              </label>
+            ))}
           </div>
         </div>
 

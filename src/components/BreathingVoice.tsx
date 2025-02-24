@@ -1,11 +1,6 @@
 import { useEffect, useRef } from "react";
-import { BreathingPhase, BreathingState } from "@/types/breathing";
+import { BreathingVoiceProps, BreathingState } from "@/types/breathing";
 import { useBreathingStore } from "@/store/breathingStore";
-
-interface BreathingVoiceProps {
-  phase: BreathingPhase;
-  secondsRemaining: number;
-}
 
 export function BreathingVoice({
   phase,

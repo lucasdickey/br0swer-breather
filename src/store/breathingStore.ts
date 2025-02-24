@@ -1,17 +1,10 @@
 import { create } from "zustand";
 import {
-  BreathingPhase,
-  BreathingSettings,
   BreathingState,
+  BreathingSettings,
+  BreathingPhase,
+  BreathingStore,
 } from "@/types/breathing";
-
-interface BreathingStore extends BreathingState {
-  settings: BreathingSettings;
-  start: () => void;
-  stop: () => void;
-  updatePhase: (phase: BreathingPhase) => void;
-  updateSettings: (settings: Partial<BreathingSettings>) => void;
-}
 
 const DEFAULT_SETTINGS: BreathingSettings = {
   cycleCount: 4,
@@ -30,16 +23,24 @@ const DEFAULT_SETTINGS: BreathingSettings = {
 };
 
 export const useBreathingStore = create<BreathingStore>((set) => ({
+  // Initial state
   isActive: false,
-  currentPhase: "inhale",
+  currentPhase: "inhale" as BreathingPhase,
   currentCycle: 1,
-  secondsRemaining: 4,
+  secondsRemaining: DEFAULT_SETTINGS.secondsPerPhase,
   settings: DEFAULT_SETTINGS,
 
+  // Actions
   start: () => set({ isActive: true }),
-  stop: () => set({ isActive: false, currentCycle: 1, currentPhase: "inhale" }),
-  updatePhase: (phase) => set({ currentPhase: phase }),
-  updateSettings: (newSettings) =>
+  stop: () =>
+    set({
+      isActive: false,
+      currentCycle: 1,
+      currentPhase: "inhale",
+      secondsRemaining: DEFAULT_SETTINGS.secondsPerPhase,
+    }),
+  updatePhase: (phase: BreathingPhase) => set({ currentPhase: phase }),
+  updateSettings: (newSettings: Partial<BreathingSettings>) =>
     set((state) => ({
       settings: { ...state.settings, ...newSettings },
     })),

@@ -23,3 +23,34 @@ export interface BreathingState {
   secondsRemaining: number;
   settings: BreathingSettings;
 }
+
+export interface BreathingStore extends BreathingState {
+  start: () => void;
+  stop: () => void;
+  updatePhase: (phase: BreathingPhase) => void;
+  updateSettings: (settings: Partial<BreathingSettings>) => void;
+}
+
+// Add component prop types
+export interface BreathingVisualProps {
+  phase: BreathingPhase;
+  progress: number;
+}
+
+export interface BreathingAudioProps {
+  phase: BreathingPhase;
+}
+
+export interface BreathingVoiceProps {
+  phase: BreathingPhase;
+  secondsRemaining: number;
+}
+
+export interface CompletionCelebrationProps {
+  onClose: () => void;
+}
+
+export interface Quote {
+  text: string;
+  author: string;
+}
