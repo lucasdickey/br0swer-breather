@@ -1,8 +1,8 @@
 import { BreathingPhase, BreathingVisualProps } from "@/types/breathing";
 
 export function BreathingVisual({ phase, progress }: BreathingVisualProps) {
-  const baseSize = 50; // Smaller base size
-  const expandedSize = 100; // Larger expanded size
+  const baseSize = 80;
+  const expandedSize = 100;
 
   const getSize = () => {
     switch (phase) {
@@ -21,32 +21,19 @@ export function BreathingVisual({ phase, progress }: BreathingVisualProps) {
     }
   };
 
-  const size = getSize();
-
-  const getAnimation = () => {
-    switch (phase) {
-      case "inhale":
-        return "animate-breathe-in";
-      case "exhale":
-        return "animate-breathe-out";
-      case "hold-in":
-      case "hold-out":
-        return "animate-hold";
-    }
-  };
-
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       <div
-        data-testid="breathing-visual"
-        className={`rounded-lg transition-transform duration-1000
-          bg-gradient-to-br from-breathing-primary to-breathing-accent
-          dark:from-breathing-accent dark:to-breathing-primary
-          shadow-lg dark:shadow-breathing-accent/20 ${getAnimation()}`}
+        className="rounded-full bg-white/10 transition-all duration-300"
         style={{
-          width: `${size}%`,
-          height: `${size}%`,
-          transition: "all 0.2s ease-in-out",
+          width: `${getSize()}%`,
+          height: `${getSize()}%`,
+        }}
+      />
+      <div
+        className="absolute inset-0 border border-white/20 rounded-full"
+        style={{
+          clipPath: `inset(0 ${100 - progress * 100}% 0 0)`,
         }}
       />
     </div>

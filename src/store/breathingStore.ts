@@ -35,6 +35,7 @@ export const useBreathingStore = create<BreathingStore>((set) => ({
     set({
       isActive: true,
       currentPhase: "prepare",
+      currentCycle: 1,
       secondsRemaining: DEFAULT_SETTINGS.prepareSeconds,
     }),
   stop: () =>
