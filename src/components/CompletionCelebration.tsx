@@ -1,88 +1,87 @@
-import { useEffect, useState } from "react";
-import { useBreathingStore } from "@/store/breathingStore";
-import confetti from "canvas-confetti";
-import { CompletionCelebrationProps, Quote } from "@/types/breathing";
+import { useEffect, useState } from 'react';
+import { CompletionCelebrationProps, Quote } from '@/types/breathing';
+import confetti from 'canvas-confetti';
 
 const INSPIRATIONAL_QUOTES: Quote[] = [
   {
-    text: "Breathing is the greatest pleasure in life",
-    author: "Giovanni Papini",
+    text: 'Breathing is the greatest pleasure in life',
+    author: 'Giovanni Papini',
   },
   {
-    text: "The only way to do great work is to love what you do",
-    author: "Steve Jobs",
+    text: 'The only way to do great work is to love what you do',
+    author: 'Steve Jobs',
   },
   {
     text: "Take a deep breath, it's just a bad day, not a bad life",
-    author: "Anonymous",
+    author: 'Anonymous',
   },
   {
-    text: "Breath is the bridge which connects life to consciousness",
-    author: "Thich Nhat Hanh",
+    text: 'Breath is the bridge which connects life to consciousness',
+    author: 'Thich Nhat Hanh',
   },
   {
-    text: "Sometimes the most productive thing you can do is relax",
-    author: "Mark Black",
+    text: 'Sometimes the most productive thing you can do is relax',
+    author: 'Mark Black',
   },
   {
-    text: "Your breath is your anchor to the present moment",
-    author: "Anonymous",
+    text: 'Your breath is your anchor to the present moment',
+    author: 'Anonymous',
   },
   {
-    text: "Breathing in, I calm body and mind. Breathing out, I smile",
-    author: "Thich Nhat Hanh",
+    text: 'Breathing in, I calm body and mind. Breathing out, I smile',
+    author: 'Thich Nhat Hanh',
   },
   {
-    text: "The quieter you become, the more you can hear",
-    author: "Ram Dass",
+    text: 'The quieter you become, the more you can hear',
+    author: 'Ram Dass',
   },
   {
-    text: "Peace begins with a smile",
-    author: "Mother Teresa",
+    text: 'Peace begins with a smile',
+    author: 'Mother Teresa',
   },
   {
-    text: "Within you lies infinite peace waiting to be discovered",
-    author: "Anonymous",
+    text: 'Within you lies infinite peace waiting to be discovered',
+    author: 'Anonymous',
   },
   {
-    text: "Your calm mind is the ultimate weapon against your challenges",
-    author: "Bryant McGill",
+    text: 'Your calm mind is the ultimate weapon against your challenges',
+    author: 'Bryant McGill',
   },
   {
-    text: "Breath is the finest gift of nature",
-    author: "Johannes Herburger",
+    text: 'Breath is the finest gift of nature',
+    author: 'Johannes Herburger',
   },
   {
-    text: "Each breath is a gift of life, treasure it",
-    author: "Anonymous",
+    text: 'Each breath is a gift of life, treasure it',
+    author: 'Anonymous',
   },
   {
-    text: "In the midst of movement and chaos, keep stillness inside of you",
-    author: "Deepak Chopra",
+    text: 'In the midst of movement and chaos, keep stillness inside of you',
+    author: 'Deepak Chopra',
   },
   {
-    text: "The present moment is filled with joy and happiness. If you are attentive, you will see it",
-    author: "Thich Nhat Hanh",
+    text: 'The present moment is filled with joy and happiness. If you are attentive, you will see it',
+    author: 'Thich Nhat Hanh',
   },
   {
-    text: "Life is not measured by the breaths we take, but by the moments that take our breath away",
-    author: "Maya Angelou",
+    text: 'Life is not measured by the breaths we take, but by the moments that take our breath away',
+    author: 'Maya Angelou',
   },
   {
-    text: "Feelings come and go like clouds in a windy sky. Conscious breathing is my anchor",
-    author: "Thich Nhat Hanh",
+    text: 'Feelings come and go like clouds in a windy sky. Conscious breathing is my anchor',
+    author: 'Thich Nhat Hanh',
   },
   {
-    text: "When you own your breath, nobody can steal your peace",
-    author: "Anonymous",
+    text: 'When you own your breath, nobody can steal your peace',
+    author: 'Anonymous',
   },
   {
-    text: "Breathe in peace, breathe out stress",
-    author: "Anonymous",
+    text: 'Breathe in peace, breathe out stress',
+    author: 'Anonymous',
   },
   {
-    text: "The way you breathe is the way you live",
-    author: "Anonymous",
+    text: 'The way you breathe is the way you live',
+    author: 'Anonymous',
   },
 ] satisfies Quote[];
 
@@ -94,7 +93,7 @@ export function CompletionCelebration({ onClose }: CompletionCelebrationProps) {
     const duration = 3000;
     const end = Date.now() + duration;
 
-    const colors = ["#48CAE4", "#2B4570", "#A5D8FF"];
+    const colors = ['#48CAE4', '#2B4570', '#A5D8FF'];
 
     (function frame() {
       confetti({
@@ -119,7 +118,7 @@ export function CompletionCelebration({ onClose }: CompletionCelebrationProps) {
 
     // Rotate quotes every 5 seconds
     const interval = setInterval(() => {
-      setCurrentQuoteIndex((prev) => (prev + 1) % INSPIRATIONAL_QUOTES.length);
+      setCurrentQuoteIndex(prev => (prev + 1) % INSPIRATIONAL_QUOTES.length);
     }, 5000);
 
     return () => {

@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { BreathingSettings } from "../BreathingSettings";
 import { useBreathingStore } from "@/store/breathingStore";
 
-jest.mock("@/store/breathingStore", () => ({
+jest.mock("../../store/breathingStore", () => ({
   useBreathingStore: jest.fn(),
 }));
 
@@ -10,7 +10,7 @@ describe("BreathingSettings", () => {
   const mockUpdateSettings = jest.fn();
 
   beforeEach(() => {
-    (useBreathingStore as jest.Mock).mockImplementation((selector) =>
+    (useBreathingStore as unknown as jest.Mock).mockImplementation((selector) =>
       selector({
         settings: {
           cycleCount: 4,

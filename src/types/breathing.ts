@@ -1,23 +1,16 @@
-export type BreathingPhase =
-  | "prepare" // New preparation phase
-  | "inhale"
-  | "hold-in"
-  | "exhale"
-  | "hold-out";
+export type BreathingPhase = 'prepare' | 'inhale' | 'hold' | 'exhale';
 
 export interface BreathingSettings {
   cycleCount: number;
   secondsPerPhase: number;
-  prepareSeconds: number;
-  enabledMethods: {
-    visual: boolean;
-    text: boolean;
-    audioChord: boolean;
-    audioVoice: boolean;
-  };
   volume: {
-    chord: number;
     voice: number;
+    chord: number;
+  };
+  enabledMethods?: {
+    audioChord?: boolean;
+    voiceGuide?: boolean;
+    visualGuide?: boolean;
   };
 }
 
@@ -27,18 +20,14 @@ export interface BreathingState {
   currentCycle: number;
   secondsRemaining: number;
   settings: BreathingSettings;
-}
-
-export interface BreathingStore extends BreathingState {
   start: () => void;
   stop: () => void;
-  updatePhase: (phase: BreathingPhase) => void;
-  updateSettings: (settings: Partial<BreathingSettings>) => void;
-  updateTimer: (secondsRemaining: number) => void;
+  updateTimer: (seconds: number) => void;
   nextPhase: () => void;
+  updateSettings: (settings: Partial<BreathingSettings>) => void;
+  updatePhase?: (phase: BreathingPhase) => void;
 }
 
-// Add component prop types
 export interface BreathingVisualProps {
   phase: BreathingPhase;
   progress: number;
@@ -61,3 +50,5 @@ export interface Quote {
   text: string;
   author: string;
 }
+
+export type BreathingStore = BreathingState;

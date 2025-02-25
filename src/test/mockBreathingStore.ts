@@ -1,32 +1,27 @@
-import { BreathingStore, BreathingSettings } from "@/types/breathing";
+import { BreathingState } from '@/types/breathing.ts';
 
-export const DEFAULT_SETTINGS: BreathingSettings = {
-  cycleCount: 4,
-  secondsPerPhase: 4,
-  prepareSeconds: 3,
-  enabledMethods: {
-    visual: true,
-    text: true,
-    audioChord: true,
-    audioVoice: true,
-  },
-  volume: {
-    chord: 0.5,
-    voice: 0.5,
-  },
-};
-
-export const mockBreathingStore = (initialState = {}): BreathingStore => ({
+export const mockBreathingStore: BreathingState = {
   isActive: false,
-  currentPhase: "inhale",
+  currentPhase: 'prepare',
   currentCycle: 1,
-  secondsRemaining: 4,
-  settings: DEFAULT_SETTINGS,
+  secondsRemaining: 3,
+  settings: {
+    cycleCount: 4,
+    secondsPerPhase: 4,
+    volume: {
+      voice: 0.7,
+      chord: 0.5,
+    },
+    enabledMethods: {
+      audioChord: true,
+      voiceGuide: true,
+      visualGuide: true,
+    },
+  },
   start: jest.fn(),
   stop: jest.fn(),
-  updatePhase: jest.fn(),
-  updateSettings: jest.fn(),
   updateTimer: jest.fn(),
   nextPhase: jest.fn(),
-  ...initialState,
-});
+  updateSettings: jest.fn(),
+  updatePhase: jest.fn(),
+};

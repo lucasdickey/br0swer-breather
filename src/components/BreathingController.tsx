@@ -1,11 +1,10 @@
-import { useEffect, useRef } from "react";
-import { useBreathingStore } from "../store/breathingStore";
-import { BreathingVisual } from "./BreathingVisual";
-import { BreathingAudio } from "./BreathingAudio";
-import { BreathingVoice } from "./BreathingVoice";
-import { BreathingSettings } from "./BreathingSettings";
-import { DarkModeToggle } from "./DarkModeToggle";
-import { CompletionCelebration } from "./CompletionCelebration";
+import { useEffect, useRef } from 'react';
+import { useBreathingStore } from '@/store/breathingStore.ts';
+import { BreathingVisual } from '@/components/BreathingVisual.tsx';
+import { BreathingAudio } from '@/components/BreathingAudio.tsx';
+import { BreathingVoice } from '@/components/BreathingVoice.tsx';
+import { DarkModeToggle } from '@/components/DarkModeToggle.tsx';
+import { CompletionCelebration } from '@/components/CompletionCelebration.tsx';
 
 export function BreathingController() {
   const {
@@ -21,7 +20,7 @@ export function BreathingController() {
     updateSettings,
   } = useBreathingStore();
 
-  const timerRef = useRef<NodeJS.Timeout>();
+  const timerRef = useRef<ReturnType<typeof setInterval>>();
 
   useEffect(() => {
     if (!isActive) {
@@ -62,6 +61,7 @@ export function BreathingController() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      <DarkModeToggle />
       <div className="h-screen flex flex-col items-center justify-center relative">
         {/* Left Volume Control */}
         <div className="absolute left-8 top-1/2 -translate-y-1/2">
@@ -74,7 +74,7 @@ export function BreathingController() {
                 max={1}
                 step={0.1}
                 value={settings.volume.voice}
-                onChange={(e) =>
+                onChange={e =>
                   updateSettings({
                     volume: {
                       ...settings.volume,
@@ -95,15 +95,15 @@ export function BreathingController() {
             <div className="flex flex-col items-center gap-4">
               <div className="text-xl text-white/60">Number of Cycles</div>
               <div className="flex gap-4">
-                {[4, 6, 8, 10].map((count) => (
+                {[4, 6, 8, 10].map(count => (
                   <button
                     key={count}
                     onClick={() => updateSettings({ cycleCount: count })}
                     className={`w-12 h-12 rounded-full flex items-center justify-center
                       ${
                         settings.cycleCount === count
-                          ? "bg-white/20 text-white"
-                          : "text-white/60 hover:text-white"
+                          ? 'bg-white/20 text-white'
+                          : 'text-white/60 hover:text-white'
                       }`}
                   >
                     {count}
@@ -115,7 +115,7 @@ export function BreathingController() {
             // Timer and Phase Display
             <>
               <div className="text-4xl font-light">
-                00:{secondsRemaining.toString().padStart(2, "0")}
+                00:{secondsRemaining.toString().padStart(2, '0')}
               </div>
 
               <div className="relative w-64 h-64">
@@ -129,9 +129,9 @@ export function BreathingController() {
               </div>
 
               <div className="text-xl text-white/60 lowercase">
-                {currentPhase === "prepare"
+                {currentPhase === 'prepare'
                   ? `get ready (${secondsRemaining})`
-                  : currentPhase.replace("-", " ")}
+                  : currentPhase.replace('-', ' ')}
               </div>
             </>
           )}
@@ -148,7 +148,7 @@ export function BreathingController() {
                 max={1}
                 step={0.1}
                 value={settings.volume.chord}
-                onChange={(e) =>
+                onChange={e =>
                   updateSettings({
                     volume: {
                       ...settings.volume,
@@ -177,6 +177,11 @@ export function BreathingController() {
           >
             Start
           </button>
+        )}
+
+        {/* Add CompletionCelebration when cycle is complete */}
+        {currentCycle > settings.cycleCount && (
+          <CompletionCelebration onClose={() => stop()} />
         )}
 
         {/* Hidden Audio Components */}

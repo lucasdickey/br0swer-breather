@@ -8,27 +8,13 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
-    extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
   },
   build: {
     sourcemap: true,
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
-      },
-      output: {
-        manualChunks: {
-          react: ['react', 'react-dom'],
-        },
-      },
-    },
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'zustand'],
-    esbuildOptions: {
-      loader: {
-        '.js': 'jsx',
-        '.ts': 'tsx',
       },
     },
   },

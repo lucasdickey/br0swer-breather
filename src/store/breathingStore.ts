@@ -1,89 +1,76 @@
-import { create } from "zustand";
-import {
-  BreathingState,
-  BreathingSettings,
-  BreathingPhase,
-  BreathingStore,
-} from "@/types/breathing";
+import { create } from 'zustand';
+import { BreathingPhase, BreathingState } from '@/types/breathing.ts';
 
-const DEFAULT_SETTINGS: BreathingSettings = {
-  cycleCount: 4,
-  secondsPerPhase: 4,
-  prepareSeconds: 3,
-  enabledMethods: {
-    visual: true,
-    text: true,
-    audioChord: true,
-    audioVoice: true,
-  },
-  volume: {
-    chord: 0.5,
-    voice: 0.5,
-  },
-};
-
-export const useBreathingStore = create<BreathingStore>((set) => ({
-  // Initial state
+// Create the store
+export const useBreathingStore = create<BreathingState>(set => ({
   isActive: false,
-  currentPhase: "inhale" as BreathingPhase,
+  currentPhase: 'prepare',
   currentCycle: 1,
-  secondsRemaining: DEFAULT_SETTINGS.secondsPerPhase,
-  settings: DEFAULT_SETTINGS,
+  secondsRemaining: 3, // Start with prepare phase
+  settings: {
+    cycleCount: 4,
+    secondsPerPhase: 4,
+    volume: {
+      voice: 0.7,
+      chord: 0.5,
+    },
+    enabledMethods: {
+      audioChord: true,
+      voiceGuide: true,
+      visualGuide: true,
+    },
+  },
 
-  // Actions
   start: () =>
     set({
       isActive: true,
-      currentPhase: "prepare",
+      currentPhase: 'prepare',
       currentCycle: 1,
-      secondsRemaining: DEFAULT_SETTINGS.prepareSeconds,
+      secondsRemaining: 3,
     }),
+
   stop: () =>
     set({
       isActive: false,
-      currentCycle: 1,
-      currentPhase: "inhale",
-      secondsRemaining: DEFAULT_SETTINGS.secondsPerPhase,
     }),
-  updatePhase: (phase: BreathingPhase) => set({ currentPhase: phase }),
-  updateSettings: (newSettings: Partial<BreathingSettings>) =>
-    set((state) => ({
-      settings: { ...state.settings, ...newSettings },
-    })),
-  updateTimer: (secondsRemaining: number) => set({ secondsRemaining }),
+
+  updateTimer: seconds =>
+    set({
+      secondsRemaining: seconds,
+    }),
+
   nextPhase: () =>
-    set((state) => {
-      const phases: BreathingPhase[] = [
-        "prepare",
-        "inhale",
-        "hold-in",
-        "exhale",
-        "hold-out",
-      ];
+    set(state => {
+      const phases: BreathingPhase[] = ['prepare', 'inhale', 'hold', 'exhale'];
       const currentIndex = phases.indexOf(state.currentPhase);
+      const nextIndex = (currentIndex + 1) % phases.length;
+      const nextPhase = phases[nextIndex];
 
-      // If we're in prepare, go to inhale
-      if (state.currentPhase === "prepare") {
-        return {
-          currentPhase: "inhale",
-          secondsRemaining: state.settings.secondsPerPhase,
-        };
-      }
+      // If we're going back to prepare, increment the cycle
+      const newCycle =
+        nextPhase === 'prepare' ? state.currentCycle + 1 : state.currentCycle;
 
-      // If we're in hold-out, go back to inhale and increment cycle
-      if (state.currentPhase === "hold-out") {
-        return {
-          currentPhase: "inhale",
-          currentCycle: state.currentCycle + 1,
-          secondsRemaining: state.settings.secondsPerPhase,
-        };
-      }
+      // Set the seconds for the next phase
+      const seconds =
+        nextPhase === 'prepare' ? 3 : state.settings.secondsPerPhase;
 
-      // Otherwise, go to next phase
-      const nextPhase = phases[currentIndex + 1];
       return {
         currentPhase: nextPhase,
-        secondsRemaining: state.settings.secondsPerPhase,
+        currentCycle: newCycle,
+        secondsRemaining: seconds,
       };
+    }),
+
+  updateSettings: newSettings =>
+    set(state => ({
+      settings: {
+        ...state.settings,
+        ...newSettings,
+      },
+    })),
+
+  updatePhase: phase =>
+    set({
+      currentPhase: phase,
     }),
 }));

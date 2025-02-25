@@ -1,41 +1,62 @@
-import { BreathingPhase, BreathingVisualProps } from "@/types/breathing";
+import { useEffect, useRef } from 'react';
+import { BreathingVisualProps } from '@/types/breathing.ts';
 
 export function BreathingVisual({ phase, progress }: BreathingVisualProps) {
-  const baseSize = 80;
-  const expandedSize = 100;
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const getSize = () => {
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Set up dimensions
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const maxRadius = Math.min(centerX, centerY) - 10;
+
+    // Calculate current radius based on phase and progress
+    let radius = maxRadius;
+
     switch (phase) {
-      case "prepare":
-        return baseSize;
-      case "inhale":
-        return baseSize + (expandedSize - baseSize) * progress;
-      case "hold-in":
-        return expandedSize;
-      case "exhale":
-        return expandedSize - (expandedSize - baseSize) * progress;
-      case "hold-out":
-        return baseSize;
-      default:
-        return baseSize;
+      case 'prepare':
+        radius = maxRadius * 0.5;
+        break;
+      case 'inhale':
+        radius = maxRadius * (0.5 + progress * 0.5);
+        break;
+      case 'hold':
+        radius = maxRadius;
+        break;
+      case 'exhale':
+        radius = maxRadius * (1 - progress * 0.5);
+        break;
     }
-  };
+
+    // Draw circle
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.fill();
+
+    // Draw outline
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }, [phase, progress]);
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div
-        className="rounded-full bg-white/10 transition-all duration-300"
-        style={{
-          width: `${getSize()}%`,
-          height: `${getSize()}%`,
-        }}
-      />
-      <div
-        className="absolute inset-0 border border-white/20 rounded-full"
-        style={{
-          clipPath: `inset(0 ${100 - progress * 100}% 0 0)`,
-        }}
-      />
-    </div>
+    <canvas
+      ref={canvasRef}
+      width={300}
+      height={300}
+      className="w-full h-full"
+    />
   );
 }

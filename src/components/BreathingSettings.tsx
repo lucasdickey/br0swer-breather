@@ -1,110 +1,129 @@
-import { useBreathingStore } from "@/store/breathingStore";
-import { BreathingStore } from "@/types/breathing";
+import { useBreathingStore } from '@/store/breathingStore.ts';
 
 export function BreathingSettings() {
-  // Use separate selectors for each value to avoid object creation
-  const settings = useBreathingStore((state) => state.settings);
-  const updateSettings = useBreathingStore((state) => state.updateSettings);
+  const settings = useBreathingStore(state => state.settings);
+
+  const updateSettings = useBreathingStore(state => state.updateSettings);
 
   return (
-    <div
-      className="w-full max-w-md p-6 bg-white dark:bg-breathing-dark/50 rounded-lg shadow-lg
-                    transition-colors duration-300"
-    >
-      <h2 className="text-xl font-semibold text-breathing-dark dark:text-breathing-neutral mb-4">
-        Settings
-      </h2>
+    <div className="p-6 bg-gray-800 rounded-lg">
+      <h2 className="text-xl font-semibold mb-4">Settings</h2>
 
-      <div className="space-y-4">
-        {/* Cycle Count */}
-        <div>
-          <label className="block text-sm font-medium text-breathing-dark dark:text-breathing-neutral mb-1">
-            Number of Cycles
-          </label>
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">Cycles</label>
+        <input
+          type="range"
+          min={1}
+          max={10}
+          value={settings.cycleCount}
+          onChange={e => updateSettings({ cycleCount: Number(e.target.value) })}
+          className="w-full"
+        />
+        <div className="text-sm text-right">{settings.cycleCount}</div>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">
+          Seconds per phase
+        </label>
+        <input
+          type="range"
+          min={2}
+          max={10}
+          value={settings.secondsPerPhase}
+          onChange={e =>
+            updateSettings({ secondsPerPhase: Number(e.target.value) })
+          }
+          className="w-full"
+        />
+        <div className="text-sm text-right">{settings.secondsPerPhase}s</div>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">Voice volume</label>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.1}
+          value={settings.volume.voice}
+          onChange={e =>
+            updateSettings({
+              volume: { ...settings.volume, voice: Number(e.target.value) },
+            })
+          }
+          className="w-full"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium mb-1">Tone volume</label>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.1}
+          value={settings.volume.chord}
+          onChange={e =>
+            updateSettings({
+              volume: { ...settings.volume, chord: Number(e.target.value) },
+            })
+          }
+          className="w-full"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label className="flex items-center">
           <input
-            type="number"
-            min={1}
-            max={10}
-            value={settings.cycleCount}
-            onChange={(e) =>
-              updateSettings({ cycleCount: Number(e.target.value) })
-            }
-            className="w-full px-3 py-2 border border-breathing-neutral dark:border-breathing-primary
-                      bg-white dark:bg-breathing-dark/30
-                      text-breathing-dark dark:text-breathing-neutral
-                      rounded-md transition-colors duration-200"
-          />
-        </div>
-
-        {/* Feedback Methods */}
-        <div>
-          <label className="block text-sm font-medium text-breathing-dark dark:text-breathing-neutral mb-2">
-            Feedback Methods
-          </label>
-          <div className="space-y-2">
-            {(
-              Object.entries(settings.enabledMethods) as [string, boolean][]
-            ).map(([method, enabled]) => (
-              <label key={method} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={enabled}
-                  onChange={() =>
-                    updateSettings({
-                      enabledMethods: {
-                        ...settings.enabledMethods,
-                        [method]: !enabled,
-                      },
-                    })
-                  }
-                  className="rounded text-breathing-primary"
-                />
-                <span className="text-sm text-breathing-dark dark:text-breathing-neutral capitalize">
-                  {method.replace(/([A-Z])/g, " $1").trim()}
-                </span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Volume Controls */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-breathing-dark dark:text-breathing-neutral mb-1">
-            Chord Volume
-          </label>
-          <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.1}
-            value={settings.volume.chord}
-            onChange={(e) =>
+            type="checkbox"
+            checked={settings.enabledMethods?.audioChord}
+            onChange={e =>
               updateSettings({
-                volume: { ...settings.volume, chord: Number(e.target.value) },
+                enabledMethods: {
+                  ...settings.enabledMethods,
+                  audioChord: e.target.checked,
+                },
               })
             }
-            className="w-full accent-breathing-primary dark:accent-breathing-accent
-                      transition-colors duration-200"
+            className="mr-2"
           />
+          <span className="text-sm">Enable audio tones</span>
+        </label>
 
-          <label className="block text-sm font-medium text-breathing-dark dark:text-breathing-neutral mb-1">
-            Voice Volume
-          </label>
+        <label className="flex items-center">
           <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.1}
-            value={settings.volume.voice}
-            onChange={(e) =>
+            type="checkbox"
+            checked={settings.enabledMethods?.voiceGuide}
+            onChange={e =>
               updateSettings({
-                volume: { ...settings.volume, voice: Number(e.target.value) },
+                enabledMethods: {
+                  ...settings.enabledMethods,
+                  voiceGuide: e.target.checked,
+                },
               })
             }
-            className="w-full accent-breathing-primary dark:accent-breathing-accent
-                      transition-colors duration-200"
+            className="mr-2"
           />
-        </div>
+          <span className="text-sm">Enable voice guidance</span>
+        </label>
+
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            checked={settings.enabledMethods?.visualGuide}
+            onChange={e =>
+              updateSettings({
+                enabledMethods: {
+                  ...settings.enabledMethods,
+                  visualGuide: e.target.checked,
+                },
+              })
+            }
+            className="mr-2"
+          />
+          <span className="text-sm">Enable visual guidance</span>
+        </label>
       </div>
     </div>
   );
